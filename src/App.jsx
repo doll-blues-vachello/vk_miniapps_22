@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PlayRoomElement from './playRoomElem';
 
 import {
   AppRoot, View, Panel, PanelHeader, PanelHeaderBack, Group, FormItem
   , Slider, Text, Button, Header, List, SimpleCell
-} from '@vkontakte/vkui'
+} from '@vkontakte/vkui';
 
 const locs = ['Стройплощадка', 'Метро', 'Парламент', 'Стадион', 'Музей', 'Дом престарелых'
   , 'Рок-концерт', 'Шахта', 'Свадьба', 'Заправочная станция', 'Библиотека'
@@ -20,6 +20,22 @@ const App = () => {
   const [playerStatus, setPlayerStatus] = useState(true);
   const [playerArray, setPlayerArray] = useState([]);
   const [curPlayer, setCurPlayer] = useState(0);
+  const [timerTime, setTimerTime] = useState(0);
+  const [timerActive, setTimerActive] = useState(false);
+
+  useEffect(() => {
+    if (timerActive && timerTime > 1) {
+      const interval = setInterval(() => setTimerTime(currentTime => currentTime - 1), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timerActive]);
+
+  useEffect(() => {
+    if (timerTime < 1) {
+      setTimerActive(false);
+      setActivatedPanel('end-game');
+    }
+  }, [timerTime]);
 
   const toPlayRoom = (num) => {
     let arr = [];
@@ -43,6 +59,8 @@ const App = () => {
     setActivatedPanel('second');
     setCurPlayer(0);
     setPlayerStatus(true);
+    setTimerTime(60 * num);
+    setTimerActive(true);
   }
 
   const playRoomHandler = (plStatus, statusCur) => {
@@ -50,7 +68,13 @@ const App = () => {
       setCurPlayer(statusCur + 1);
       setPlayerStatus(plStatus);
     }
-    if (curPlayer === numOfPlayers - 1) setActivatedPanel('end-game');
+    if (curPlayer === numOfPlayers - 1) setActivatedPanel('find-spy');
+  }
+
+  const toMain = () => {
+    setTimerActive(false);
+    setActivatedPanel('end-game');
+    setTimerTime(0);
   }
 
   return (
@@ -74,8 +98,9 @@ const App = () => {
           </Group>
         </Panel>
         <Panel id="second">
-          <PanelHeader left={<PanelHeaderBack onClick={() => setActivatedPanel('main')} />}>Найди шпиона!</PanelHeader>
+          <PanelHeader left={<PanelHeaderBack onClick={() => toMain()} />}>Найди шпиона!</PanelHeader>
           <Group className="play-room-js">
+            <Text className='play-room-text'>Оставшееся время: {Math.floor(timerTime / 60)}:{timerTime % 60}</Text>
             {
               playerStatus ?
                 <>
@@ -91,8 +116,16 @@ const App = () => {
             }
           </Group>
         </Panel>
+        <Panel id="find-spy">
+          <PanelHeader left={<PanelHeaderBack onClick={() => toMain()} />}>Spyre</PanelHeader>
+          <Group className='play-room-js'>
+            <Text className='play-room-text'>Оставшееся время: {Math.floor(timerTime / 60)}:{timerTime % 60}</Text>
+            <Text className='play-room-text'>Сможете ли вы найти шпиона?</Text>
+            <Button className='play-room-text' onClick={() => toMain()}>К результатам</Button>
+          </Group>
+        </Panel>
         <Panel id="end-game">
-        <PanelHeader left={<PanelHeaderBack onClick={() => setActivatedPanel('main')} />}>Spyre</PanelHeader>
+          <PanelHeader left={<PanelHeaderBack onClick={() => toMain()} />}>Spyre</PanelHeader>
           <Group className='play-room-js'>
             <Text className='play-room-text'>Игра окончена!</Text>
             <Button className='play-room-text' onClick={() => setActivatedPanel('main')}>В главное меню</Button>
