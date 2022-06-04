@@ -8,6 +8,10 @@
     width: 40%;
 }
 
+.marginable {
+    margin: 8px;
+}
+
 .play-room-text {
     text-align: center;
     width: 100%;
