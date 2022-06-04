@@ -1,0 +1,9 @@
+.flex-style {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.child-style {
+    width: 45%;
+}
