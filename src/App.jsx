@@ -95,10 +95,8 @@ const App = () => {
 
   const toPlayRoom = (num) => {
     let arr = [];
-    console.log(players);
 
     const spyIndex = Math.floor(Math.random() * (num));
-    console.log(spyIndex);
     let secSpyIndex = -1;
 
     if (num > 7) secSpyIndex = Math.floor(Math.random() * (num));
