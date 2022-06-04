@@ -8,7 +8,6 @@ const locs = ['Стройплощадка', 'Метро', 'Парламент', 
 
 const locationList = locs.map((elem, index) => <SimpleCell className='child-style' key={index}>{elem}</SimpleCell>);
 
-
 const App = () => {
   return (
     <AppRoot>
