@@ -100,19 +100,19 @@ const App = () => {
       bridge.send("VKWebAppFlashSetLevel", { level: 1.0 });
       setTimeout(() => {
         bridge.send("VKWebAppFlashSetLevel", { level: 0.0 });
+      }, 500);
+      setTimeout(() => {
+        bridge.send("VKWebAppFlashSetLevel", { level: 1.0 });
+      }, 1000);
+      setTimeout(() => {
+        bridge.send("VKWebAppFlashSetLevel", { level: 0.0 });
       }, 1500);
       setTimeout(() => {
         bridge.send("VKWebAppFlashSetLevel", { level: 1.0 });
-      }, 3000);
+      }, 2000);
       setTimeout(() => {
         bridge.send("VKWebAppFlashSetLevel", { level: 0.0 });
-      }, 4500);
-      setTimeout(() => {
-        bridge.send("VKWebAppFlashSetLevel", { level: 1.0 });
-      }, 6000);
-      setTimeout(() => {
-        bridge.send("VKWebAppFlashSetLevel", { level: 0.0 });
-      }, 7500);
+      }, 2500);
     }
   }, [timerTime]);
 
