@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PlayRoomElement from './playRoomElem';
+import bridge from '@vkontakte/vk-bridge';
 
 import {
   AppRoot, View, Panel, PanelHeader, PanelHeaderBack, Group, FormItem
@@ -9,7 +10,7 @@ import {
 let locs = ['Стройплощадка', 'Метро', 'Парламент', 'Стадион', 'Музей', 'Дом престарелых'
   , 'Рок-концерт', 'Шахта', 'Свадьба', 'Заправочная станция', 'Библиотека'
   , 'Шоколадная фабрика', 'Кладбище', 'Джаз-бэнд', 'Виноградник', 'Порт', 'Автогонки', 'Тюрьма'
-, 'Выставка кошек'];
+  , 'Выставка кошек'];
 
 const players = ['', '', '', '', ''];
 let playersList = players.map((elem, index) => {
@@ -87,11 +88,21 @@ const App = () => {
       setTimerActive(false);
       setActivatedPanel('end-game');
     }
+    console.log(timerTime);
   }, [timerTime]);
 
   useEffect(() => {
     handlerRender(numOfPlayers);
   }, [numOfPlayers]);
+
+  useEffect(() => {
+    if (timerTime < 0) {
+      bridge.send("VKWebAppFlashSetLevel", { level: 1.0 });
+      setTimeout(() => {
+        bridge.send("VKWebAppFlashSetLevel", { level: 0.0 });
+      }, 1500);
+    }
+  }, [timerTime]);
 
   const toPlayRoom = (num) => {
     let arr = [];
@@ -137,7 +148,7 @@ const App = () => {
     setnewLocationName('');
     if (text && !locs.includes(text)) {
       locs.push(text);
-      setIsLocAdded(true); 
+      setIsLocAdded(true);
     }
   }
 
@@ -171,7 +182,7 @@ const App = () => {
             <FormItem top={'Добавить локацию'}>
               <Input onChange={(e) => setnewLocationName(e.target.value)} value={newLocationName} type="text" placeholder='Имя игрока'></Input>
             </FormItem>
-              <Button className='btn-main-screen' onClick={() => addHandlerLocations(newLocationName)}>Добавить локацию</Button>
+            <Button className='btn-main-screen' onClick={() => addHandlerLocations(newLocationName)}>Добавить локацию</Button>
           </Group>
         </Panel>
         <Panel id="second">
@@ -205,7 +216,7 @@ const App = () => {
           <PanelHeader left={<PanelHeaderBack onClick={() => toMain()} />}>Spyre</PanelHeader>
           <Group className='play-room-js'>
             <Text className='play-room-text'>Игра окончена!</Text>
-            <Text className='play-room-text'>Шпионом был: { activetedPanel === 'end-game' ? findSpyInPl() : '' }</Text>
+            <Text className='play-room-text'>Шпионом был: {activetedPanel === 'end-game' ? findSpyInPl() : ''}</Text>
             <Button className='play-room-text' onClick={() => setActivatedPanel('main')}>В главное меню</Button>
           </Group>
         </Panel>
